@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Météo Global</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🌤️ Dashboard Météo Global</h1>
+            <div class="header-info">
+                <span id="connection-status" class="status-indicator">●</span>
+                <span id="last-update">Dernière mise à jour: --</span>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-tabs">
+            <button class="tab-btn active" data-tab="realtime">Temps Réel</button>
+            <button class="tab-btn" data-tab="historical">Historique</button>
+            <button class="tab-btn" data-tab="seasonal">Profils Saisonniers</button>
+            <button class="tab-btn" data-tab="anomalies">Anomalies</button>
+            <button class="tab-btn" data-tab="records">Records</button>
+            <button class="tab-btn" data-tab="alerts">Alertes</button>
+        </nav>
+
+        <!-- City Selector -->
+        <div class="city-selector">
+            <label for="country-select">Pays:</label>
+            <select id="country-select">
+                <option value="">Chargement...</option>
+            </select>
+            <label for="city-select">Ville:</label>
+            <select id="city-select">
+                <option value="">Sélectionnez un pays</option>
+            </select>
+            <button id="load-city-btn" class="btn-primary">Charger</button>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- Temps Réel Tab -->
+            <div id="realtime-tab" class="tab-pane active">
+                <h2>📡 Données en Temps Réel</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Messages Reçus</h3>
+                        <p id="realtime-count">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Anomalies Détectées</h3>
+                        <p id="anomalies-count">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Agrégats</h3>
+                        <p id="aggregates-count">0</p>
+                    </div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <h3>Température en Temps Réel</h3>
+                        <canvas id="realtime-temp-chart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Vitesse du Vent en Temps Réel</h3>
+                        <canvas id="realtime-wind-chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <h3>Dernières Données</h3>
+                    <table id="realtime-table">
+                        <thead>
+                            <tr>
+                                <th>Ville</th>
+                                <th>Température</th>
+                                <th>Vent</th>
+                                <th>Alertes</th>
+                                <th>Heure</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Historique Tab -->
+            <div id="historical-tab" class="tab-pane">
+                <h2>📊 Données Historiques</h2>
+                
+                <div class="chart-container full-width">
+                    <h3>Évolution de la Température (10 ans)</h3>
+                    <canvas id="historical-temp-chart"></canvas>
+                </div>
+                
+                <div class="chart-container full-width">
+                    <h3>Évolution de la Vitesse du Vent (10 ans)</h3>
+                    <canvas id="historical-wind-chart"></canvas>
+                </div>
+            </div>
+
+            <!-- Profils Saisonniers Tab -->
+            <div id="seasonal-tab" class="tab-pane">
+                <h2>🍂 Profils Saisonniers</h2>
+                
+                <div class="chart-container full-width">
+                    <h3>Profil Saisonnier de la Température</h3>
+                    <canvas id="seasonal-temp-chart"></canvas>
+                </div>
+                
+                <div class="chart-container full-width">
+                    <h3>Profil Saisonnier du Vent</h3>
+                    <canvas id="seasonal-wind-chart"></canvas>
+                </div>
+
+                <div class="chart-container full-width">
+                    <h3>Probabilité d'Alerte par Mois</h3>
+                    <canvas id="seasonal-alert-chart"></canvas>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Mois le Plus Chaud</h3>
+                        <p id="hottest-month">--</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Mois le Plus Froid</h3>
+                        <p id="coldest-month">--</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Mois le Plus Venteux</h3>
+                        <p id="windiest-month">--</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Anomalies Tab -->
+            <div id="anomalies-tab" class="tab-pane">
+                <h2>🚨 Anomalies Détectées</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-card alert">
+                        <h3>Total Anomalies</h3>
+                        <p id="total-anomalies">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Vagues de Chaleur</h3>
+                        <p id="heat-waves">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Vagues de Froid</h3>
+                        <p id="cold-spells">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Tempêtes de Vent</h3>
+                        <p id="wind-storms">0</p>
+                    </div>
+                </div>
+
+                <div class="chart-container full-width">
+                    <h3>Répartition des Anomalies par Type</h3>
+                    <canvas id="anomalies-pie-chart"></canvas>
+                </div>
+
+                <div class="table-container">
+                    <h3>Dernières Anomalies</h3>
+                    <table id="anomalies-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Variable</th>
+                                <th>Observé</th>
+                                <th>Attendu</th>
+                                <th>Écart</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Records Tab -->
+            <div id="records-tab" class="tab-pane">
+                <h2>🏆 Records Climatiques</h2>
+                
+                <div class="records-grid">
+                    <div class="record-card">
+                        <h3>🌡️ Jour le Plus Chaud</h3>
+                        <p class="record-value" id="hottest-day">--</p>
+                        <p class="record-date" id="hottest-date">--</p>
+                    </div>
+                    <div class="record-card">
+                        <h3>❄️ Jour le Plus Froid</h3>
+                        <p class="record-value" id="coldest-day">--</p>
+                        <p class="record-date" id="coldest-date">--</p>
+                    </div>
+                    <div class="record-card">
+                        <h3>💨 Rafale de Vent la Plus Forte</h3>
+                        <p class="record-value" id="strongest-wind">--</p>
+                        <p class="record-date" id="wind-date">--</p>
+                    </div>
+                    <div class="record-card">
+                        <h3>🌧️ Jour le Plus Pluvieux</h3>
+                        <p class="record-value" id="rainiest-day">--</p>
+                        <p class="record-date" id="rainiest-date">--</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alertes Tab -->
+            <div id="alerts-tab" class="tab-pane">
+                <h2>⚠️ Alertes Météorologiques</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-card alert">
+                        <h3>Total Alertes</h3>
+                        <p id="total-alerts">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Alertes Vent (Level 1)</h3>
+                        <p id="wind-alerts-1">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Alertes Vent (Level 2)</h3>
+                        <p id="wind-alerts-2">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Alertes Chaleur (Level 1)</h3>
+                        <p id="heat-alerts-1">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Alertes Chaleur (Level 2)</h3>
+                        <p id="heat-alerts-2">0</p>
+                    </div>
+                </div>
+
+                <div class="chart-container full-width">
+                    <h3>Évolution des Alertes par Niveau</h3>
+                    <canvas id="alerts-chart"></canvas>
+                </div>
+
+                <div class="table-container">
+                    <h3>Dernières Alertes</h3>
+                    <table id="alerts-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Ville</th>
+                                <th>Type</th>
+                                <th>Niveau</th>
+                                <th>Température</th>
+                                <th>Vent</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>

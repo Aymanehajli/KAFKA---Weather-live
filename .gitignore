@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# Checkpoints Spark
+/tmp/checkpoint/
+checkpoint/
+*.checkpoint
+
+# Logs
+*.log
+logs/
+logsresults.txt
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Output files
+output/
+*.png
+*.jpg
+*.pdf
+
+# Docker volumes (si nécessaire)
+# data/
+
+# Fichiers temporaires
+*.tmp
+*.temp
+/tmp/
+
+# Secrets (si nécessaire)
+.env
+secrets.json
